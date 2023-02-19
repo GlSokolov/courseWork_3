@@ -105,7 +105,7 @@ public class SocksController {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
             return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN)
                     .contentLength(Files.size(path))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "txt\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "Socks\"")
                     .body(resource);
         } catch (IOException e){
             return ResponseEntity.internalServerError().build();

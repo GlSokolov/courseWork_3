@@ -14,9 +14,9 @@ import java.nio.file.Path;
 @Service
 public class FileServiceImpl implements FileService {
 
-    @Value("path.to.data.file")
+    @Value("${path.to.data.file}")
     private String dataFilePath;
-    @Value("name.of.socks.data.file")
+    @Value("${name.of.socks.data.file}")
     private String dataFileName;
 
     @Override
