@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/socks")
@@ -32,7 +33,7 @@ public class SocksController {
 
     private final FileService fileService;
 
-    @PostMapping("/addNewSocks")
+    @PostMapping
     @Operation(summary = "Приход товара", description = "Добавление новой пары носков на склад")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Удалось добавить приход"),
@@ -51,20 +52,33 @@ public class SocksController {
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<HashMap<Integer,Socks>> getSocks () {
+    public ResponseEntity<Map<Integer,Socks>> getSocks () {
         return ResponseEntity.ok(socksService.getAllSocks());
     }
 
-    @GetMapping("/{color}&{cottonPart}")
-    @Operation(summary = "Список определенного товара", description = "Показывает список носков по конкретному цвет и долей хлопка")
+    @GetMapping("/{color}&{size}&{cottonMax}")
+    @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка < указанной")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Socks> getCertainSocks (@PathVariable String color,
-                                                  @PathVariable int cottonPart) {
-        return ResponseEntity.ok(socksService.getCertainSocks(color, cottonPart));
+    public ResponseEntity<Socks> getCertainSocksMax (@PathVariable @RequestParam (name = "Color") String color,
+                                                  @PathVariable @RequestParam (name = "size") String size,
+                                                  @PathVariable @RequestParam(name = "cottonMax") int cottonMax) {
+        return ResponseEntity.ok(socksService.getCertainSocksMax(color, size, cottonMax));
+    }
+    @GetMapping("/{color}&{size}&{cottonMin}")
+    @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка > указанной")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
+            @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
+            @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
+    })
+    public ResponseEntity<Socks> getCertainSocksMin (@PathVariable String color,
+                                                  @PathVariable String size,
+                                                  @PathVariable int cottonMin) {
+        return ResponseEntity.ok(socksService.getCertainSocksMin(color, size, cottonMin));
     }
 
     @PutMapping("/release")
