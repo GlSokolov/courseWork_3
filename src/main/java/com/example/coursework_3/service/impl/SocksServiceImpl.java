@@ -16,21 +16,19 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class SocksServiceImpl implements SocksService {
 
-    private static Map<Integer, Socks> socksMap = new HashMap<>();
-    private static int id=0;
+    private static List<Socks> socksMap = new ArrayList<>();
     final private FileService fileService;
 
 
     @Override
-    public Map<Integer, Socks> getAllSocks() {
+    public List<Socks> getAllSocks() {
         if (socksMap.isEmpty()){
             throw new NotFoundException("<Список пуст>");
         }
@@ -38,33 +36,18 @@ public class SocksServiceImpl implements SocksService {
     }
 
     @Override
-    public Socks getCertainSocksMax(String color, String size, int cottonMax) {
-        if ((color.isBlank() || color.isEmpty())
+    public Socks getCertainSocksMinMax(String color, String size, Integer cottonMin, Integer cottonMax) {
+        for (Socks oldSocks : socksMap) {
+            if ((color.isBlank() || color.isEmpty())
                 || (size.isBlank() || size.isEmpty())
-                || (cottonMax < 0 || cottonMax > 100)) {
-            throw new IllegalArgumentException("<Неверно указаны параметры>");
-        } else {
-            for (Socks oldSocks : socksMap.values()) {
-                if (oldSocks.getColor().getNameColor().equals(color)
-                        && oldSocks.getSize().getRussianSize().equals(size)
-                        && oldSocks.getCottonPart() <= cottonMax) {
-                    return oldSocks;
-                }
-            }
-        }
-        throw new NotFoundException("<Товар с таким параметрами не найдены>");
-    }
-    @Override
-    public Socks getCertainSocksMin(String color, String size, int cottonMin) {
-        if ((color.isBlank() || color.isEmpty())
-                || (size.isBlank() || size.isEmpty())
+                || (cottonMax < 0 || cottonMax > 100)
                 || (cottonMin < 0 || cottonMin > 100)) {
-            throw new IllegalArgumentException("<Неверно указаны параметры>");
-        } else {
-            for (Socks oldSocks : socksMap.values()) {
+                throw new IllegalArgumentException("<Неверно указаны параметры>");
+            } else {
                 if (oldSocks.getColor().getNameColor().equals(color)
                         && oldSocks.getSize().getRussianSize().equals(size)
-                        && oldSocks.getCottonPart() >= cottonMin) {
+                        && oldSocks.getCottonPart() >= cottonMin
+                        && oldSocks.getCottonPart() <= cottonMax) {
                     return oldSocks;
                 }
             }
@@ -77,32 +60,34 @@ public class SocksServiceImpl implements SocksService {
         if (socks == null) {
             throw new IllegalArgumentException("<Неверно указана пара носков>");
         } else {
-            for (Socks oldSocks : socksMap.values()){
+            for (Socks oldSocks : socksMap){
                 if (oldSocks.getColor().equals(socks.getColor())
                         && oldSocks.getSize().equals(socks.getSize())
                         && oldSocks.getCottonPart() == socks.getCottonPart()){
+                    socksMap.remove(oldSocks);
                     oldSocks.setQuantity(oldSocks.getQuantity() + socks.getQuantity());
-                    socksMap.put(id ,oldSocks);
+                    socksMap.add(oldSocks);
                     saveToFile();
                     return socks;
 
                 }
             }
         }
-        socksMap.put(++id,socks);
+        socksMap.add(socks);
         saveToFile();
         return socks;
     }
 
     @Override
     public boolean releaseSocks(Socks socks) {
-        for (Socks neededSocks : socksMap.values()) {
+        for (Socks neededSocks : socksMap) {
             if (neededSocks.getColor().equals(socks.getColor())
                     && neededSocks.getSize().equals(socks.getSize())
                     && neededSocks.getCottonPart() == socks.getCottonPart()
                     && neededSocks.getQuantity() > socks.getQuantity()) {
+                socksMap.remove(neededSocks);
                 neededSocks.setQuantity(neededSocks.getQuantity() - socks.getQuantity());
-                socksMap.put(id,neededSocks);
+                socksMap.add(neededSocks);
                 saveToFile();
                 return true;
 
@@ -110,7 +95,7 @@ public class SocksServiceImpl implements SocksService {
                     && neededSocks.getSize().equals(socks.getSize())
                     && neededSocks.getCottonPart() == socks.getCottonPart()
                     && neededSocks.getQuantity() == socks.getQuantity()) {
-                socksMap.remove(id, neededSocks);
+                socksMap.remove(neededSocks);
                 return true;
 
             } else if (neededSocks.getColor().equals(socks.getColor())
@@ -126,13 +111,14 @@ public class SocksServiceImpl implements SocksService {
 
     @Override
     public boolean deleteDefectiveSocks(Socks socks) {
-        for (Socks defectiveSocks : socksMap.values()) {
+        for (Socks defectiveSocks : socksMap) {
             if (defectiveSocks.getColor().equals(socks.getColor())
                     && defectiveSocks.getSize().equals(socks.getSize())
                     && defectiveSocks.getCottonPart() == socks.getCottonPart()
                     && defectiveSocks.getQuantity() > socks.getQuantity()){
+                socksMap.remove(defectiveSocks);
                 defectiveSocks.setQuantity(defectiveSocks.getQuantity() - socks.getQuantity());
-                socksMap.put(id, defectiveSocks);
+                socksMap.add(defectiveSocks);
                 saveToFile();
                 return true;
 
@@ -140,7 +126,7 @@ public class SocksServiceImpl implements SocksService {
                     && defectiveSocks.getSize().equals(socks.getSize())
                     && defectiveSocks.getCottonPart() == socks.getCottonPart()
                     && defectiveSocks.getQuantity() == socks.getQuantity()) {
-                socksMap.remove(id, defectiveSocks);
+                socksMap.remove(defectiveSocks);
                 return true;
 
             } else if (defectiveSocks.getColor().equals(socks.getColor())
@@ -165,7 +151,7 @@ public class SocksServiceImpl implements SocksService {
     private void readFromFile(){
         String json = fileService.readFromFile();
         try{
-            socksMap = new ObjectMapper().readValue(json, new TypeReference<Map<Integer, Socks>>() {
+            socksMap = new ObjectMapper().readValue(json, new TypeReference<List<Socks>>() {
             });
         } catch (JsonProcessingException e){
             throw new RuntimeException(e);
@@ -184,10 +170,9 @@ public class SocksServiceImpl implements SocksService {
 
     @Override
     public Path createSocksReport() {
-        socksMap.getOrDefault(id, null);
         Path socks = fileService.createTempFile("Socks");
         try (Writer writer = Files.newBufferedWriter(socks, StandardCharsets.UTF_8)){
-            for (Socks sock : socksMap.values()) {
+            for (Socks sock : socksMap) {
                 writer.append("Цвет носков: ").append(sock.getColor().getNameColor()).append("\r\n")
                         .append("Размер: ").append(sock.getSize().getRussianSize()).append("\r\n")
                         .append("Доля хлопка: ").append(String.valueOf(sock.getCottonPart())).append("\r\n")

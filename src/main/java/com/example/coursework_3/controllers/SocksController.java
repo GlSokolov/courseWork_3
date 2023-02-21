@@ -53,12 +53,12 @@ public class SocksController {
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Map<Integer,Socks>> getSocks () {
+    public ResponseEntity<List<Socks>> getSocks () {
         return ResponseEntity.ok(socksService.getAllSocks());
     }
 
-    @GetMapping("/cottonMax")
-    @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка < указанной")
+    @GetMapping("/cottonMinMax")
+    @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка в промежутке от установленных min и max значениях")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
@@ -66,20 +66,9 @@ public class SocksController {
     })
     public ResponseEntity<Socks> getCertainSocksMax (@RequestParam String color,
                                                      @Valid @RequestParam String size,
-                                                     @Valid @RequestParam int cottonMax) {
-        return ResponseEntity.ok(socksService.getCertainSocksMax(color, size, cottonMax));
-    }
-    @GetMapping("/cottonMin")
-    @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка > указанной")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
-            @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
-            @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
-    })
-    public ResponseEntity<Socks> getCertainSocksMin (@RequestParam String color,
-                                                     @Valid @RequestParam String size,
-                                                     @Valid @RequestParam int cottonMin) {
-        return ResponseEntity.ok(socksService.getCertainSocksMin(color, size, cottonMin));
+                                                     @Valid @RequestParam Integer cottonMin,
+                                                     @Valid @RequestParam Integer cottonMax) {
+        return ResponseEntity.ok(socksService.getCertainSocksMinMax(color, size, cottonMin, cottonMax));
     }
 
     @PutMapping
