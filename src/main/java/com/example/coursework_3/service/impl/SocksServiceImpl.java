@@ -43,12 +43,13 @@ public class SocksServiceImpl implements SocksService {
                 || (size.isBlank() || size.isEmpty())
                 || (cottonMax < 0 || cottonMax > 100)) {
             throw new IllegalArgumentException("<Неверно указаны параметры>");
-        }
-        for (Socks oldSocks : socksMap.values()){
-            if (oldSocks.getColor().getNameColor().equals(color)
-                    && oldSocks.getSize().getRussianSize().equals(size)
-                    && oldSocks.getCottonPart() <= cottonMax){
-                return oldSocks;
+        } else {
+            for (Socks oldSocks : socksMap.values()) {
+                if (oldSocks.getColor().getNameColor().equals(color)
+                        && oldSocks.getSize().getRussianSize().equals(size)
+                        && oldSocks.getCottonPart() <= cottonMax) {
+                    return oldSocks;
+                }
             }
         }
         throw new NotFoundException("<Товар с таким параметрами не найдены>");
@@ -59,12 +60,13 @@ public class SocksServiceImpl implements SocksService {
                 || (size.isBlank() || size.isEmpty())
                 || (cottonMin < 0 || cottonMin > 100)) {
             throw new IllegalArgumentException("<Неверно указаны параметры>");
-        }
-        for (Socks oldSocks : socksMap.values()){
-            if (oldSocks.getColor().getNameColor().equals(color)
-                    && oldSocks.getSize().getRussianSize().equals(size)
-                    && oldSocks.getCottonPart() >= cottonMin){
-                return oldSocks;
+        } else {
+            for (Socks oldSocks : socksMap.values()) {
+                if (oldSocks.getColor().getNameColor().equals(color)
+                        && oldSocks.getSize().getRussianSize().equals(size)
+                        && oldSocks.getCottonPart() >= cottonMin) {
+                    return oldSocks;
+                }
             }
         }
         throw new NotFoundException("<Товар с таким параметрами не найдены>");
@@ -80,9 +82,9 @@ public class SocksServiceImpl implements SocksService {
                         && oldSocks.getSize().equals(socks.getSize())
                         && oldSocks.getCottonPart() == socks.getCottonPart()){
                     oldSocks.setQuantity(oldSocks.getQuantity() + socks.getQuantity());
-                    socksMap.replace(id, socks ,oldSocks);
+                    socksMap.put(id ,oldSocks);
                     saveToFile();
-                    return oldSocks;
+                    return socks;
 
                 }
             }
@@ -100,7 +102,7 @@ public class SocksServiceImpl implements SocksService {
                     && neededSocks.getCottonPart() == socks.getCottonPart()
                     && neededSocks.getQuantity() > socks.getQuantity()) {
                 neededSocks.setQuantity(neededSocks.getQuantity() - socks.getQuantity());
-                socksMap.replace(id,socks ,neededSocks);
+                socksMap.put(id,neededSocks);
                 saveToFile();
                 return true;
 
@@ -130,7 +132,7 @@ public class SocksServiceImpl implements SocksService {
                     && defectiveSocks.getCottonPart() == socks.getCottonPart()
                     && defectiveSocks.getQuantity() > socks.getQuantity()){
                 defectiveSocks.setQuantity(defectiveSocks.getQuantity() - socks.getQuantity());
-                socksMap.replace(id, socks,defectiveSocks);
+                socksMap.put(id, defectiveSocks);
                 saveToFile();
                 return true;
 

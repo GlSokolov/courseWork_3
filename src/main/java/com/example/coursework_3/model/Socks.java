@@ -8,7 +8,6 @@ import javax.validation.constraints.*;
 @EqualsAndHashCode
 @NoArgsConstructor
 @ToString
-@Setter
 public class Socks {
 
     @NotBlank
@@ -21,9 +20,9 @@ public class Socks {
     private int cottonPart;
     @Positive
     @Min(1)
+    @Setter
     private int quantity;
 
-    @ToString
     public enum Size {
         S("35-38"), M("39-42"), L("43-46"), XL("47-49");
 
@@ -37,7 +36,6 @@ public class Socks {
             return translate;
         }
     }
-    @ToString
     public enum Color {
         WHITE("Белый"), BLACK("Черный"), RED("Красный"), YELLOW("Желтый"), BLUE("Синий");
 

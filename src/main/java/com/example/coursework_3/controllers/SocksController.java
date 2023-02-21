@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class SocksController {
             @ApiResponse(responseCode = "HTTP 400" , description = "Параметры запроса отсутствуюит или имеют некорректный формат"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Socks> addSocks (@RequestBody Socks socks) {
+    public ResponseEntity<Socks> addSocks (@Valid @RequestBody Socks socks) {
         socksService.addSocks(socks);
         return ResponseEntity.ok(socks);
     }
@@ -56,50 +57,50 @@ public class SocksController {
         return ResponseEntity.ok(socksService.getAllSocks());
     }
 
-    @GetMapping("/{color}&{size}&{cottonMax}")
+    @GetMapping("/cottonMax")
     @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка < указанной")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Socks> getCertainSocksMax (@PathVariable @RequestParam (name = "Color") String color,
-                                                  @PathVariable @RequestParam (name = "size") String size,
-                                                  @PathVariable @RequestParam(name = "cottonMax") int cottonMax) {
+    public ResponseEntity<Socks> getCertainSocksMax (@RequestParam String color,
+                                                     @Valid @RequestParam String size,
+                                                     @Valid @RequestParam int cottonMax) {
         return ResponseEntity.ok(socksService.getCertainSocksMax(color, size, cottonMax));
     }
-    @GetMapping("/{color}&{size}&{cottonMin}")
+    @GetMapping("/cottonMin")
     @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка > указанной")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Socks> getCertainSocksMin (@PathVariable String color,
-                                                  @PathVariable String size,
-                                                  @PathVariable int cottonMin) {
+    public ResponseEntity<Socks> getCertainSocksMin (@RequestParam String color,
+                                                     @Valid @RequestParam String size,
+                                                     @Valid @RequestParam int cottonMin) {
         return ResponseEntity.ok(socksService.getCertainSocksMin(color, size, cottonMin));
     }
 
-    @PutMapping("/release")
+    @PutMapping
     @Operation(summary = "Отпуск товара", description = "Ищет нужную пару на складе и производит ее отпуск в нужном количестве")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Товар отпущен со склада"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Boolean> releaseSocks (@RequestBody Socks socks) {
+    public ResponseEntity<Boolean> releaseSocks (@Valid @RequestBody Socks socks) {
         return ResponseEntity.ok(socksService.releaseSocks(socks));
     }
 
-    @DeleteMapping("/deleteDefectiveSocks")
+    @DeleteMapping
     @Operation(summary = "Удаление бракованного товара", description = "Убирает со склада бракованные носки")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Товар удален со склада"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Boolean> deleteDefectiveSocks (@RequestBody Socks socks) {
+    public ResponseEntity<Boolean> deleteDefectiveSocks (@Valid @RequestBody Socks socks) {
         return ResponseEntity.ok(socksService.deleteDefectiveSocks(socks));
     }
 
