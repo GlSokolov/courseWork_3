@@ -1,0 +1,32 @@
+[
+  {
+    "size": "L",
+    "color": "WHITE",
+    "cottonPart": 100,
+    "quantity": 14
+  },
+  {
+    "size": "S",
+    "color": "WHITE",
+    "cottonPart": 50,
+    "quantity": 4
+  },
+  {
+    "size": "XL",
+    "color": "WHITE",
+    "cottonPart": 50,
+    "quantity": 5
+  },
+  {
+    "size": "M",
+    "color": "WHITE",
+    "cottonPart": 30,
+    "quantity": 2
+  },
+  {
+    "size": "L",
+    "color": "WHITE",
+    "cottonPart": 80,
+    "quantity": 6
+  }
+]

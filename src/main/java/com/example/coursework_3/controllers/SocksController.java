@@ -15,14 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/socks")
@@ -46,29 +42,29 @@ public class SocksController {
         return ResponseEntity.ok(socks);
     }
 
-    @GetMapping
-    @Operation(summary = "Список всего товара", description = "Показывает список всех носков на данный момент")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
-            @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
-            @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
-    })
-    public ResponseEntity<List<Socks>> getSocks () {
-        return ResponseEntity.ok(socksService.getAllSocks());
-    }
+//    @GetMapping
+//    @Operation(summary = "Список всего товара", description = "Показывает список всех носков на данный момент")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
+//            @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
+//            @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
+//    })
+//    public ResponseEntity<List<Socks>> getSocks () {
+//        return ResponseEntity.ok(socksService.getAllSocks());
+//    }
 
-    @GetMapping("/cottonMinMax")
-    @Operation(summary = "Список определенного товара", description = "Показывает список носков по доле хлопка в промежутке от установленных min и max значениях")
+    @GetMapping
+    @Operation(summary = "Список товара", description = "Показывает список носков по вводимым параметрам")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
             @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
-    public ResponseEntity<Socks> getCertainSocksMax (@RequestParam String color,
-                                                     @Valid @RequestParam String size,
-                                                     @Valid @RequestParam Integer cottonMin,
-                                                     @Valid @RequestParam Integer cottonMax) {
-        return ResponseEntity.ok(socksService.getCertainSocksMinMax(color, size, cottonMin, cottonMax));
+    public ResponseEntity<Object> getSocks (@RequestParam (required = false) Socks.Color color,
+                                            @RequestParam (required = false) Socks.Size size,
+                                            @RequestParam (required = false) Integer cottonMin,
+                                            @RequestParam (required = false) Integer cottonMax) {
+        return ResponseEntity.ok(socksService.getSocks(color, size, cottonMin, cottonMax));
     }
 
     @PutMapping
@@ -79,7 +75,7 @@ public class SocksController {
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
     public ResponseEntity<Boolean> releaseSocks (@Valid @RequestBody Socks socks) {
-        return ResponseEntity.ok(socksService.releaseSocks(socks));
+        return ResponseEntity.ok(socksService.releaseOrDeleteSocks(socks));
     }
 
     @DeleteMapping
@@ -90,7 +86,7 @@ public class SocksController {
             @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
     })
     public ResponseEntity<Boolean> deleteDefectiveSocks (@Valid @RequestBody Socks socks) {
-        return ResponseEntity.ok(socksService.deleteDefectiveSocks(socks));
+        return ResponseEntity.ok(socksService.releaseOrDeleteSocks(socks));
     }
 
     @GetMapping(value = "/socks.txt", produces = MediaType.TEXT_PLAIN_VALUE)
