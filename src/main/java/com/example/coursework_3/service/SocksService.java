@@ -7,8 +7,6 @@ import java.nio.file.Path;
 public interface SocksService {
 
     Object getSocks(Socks.Color color, Socks.Size size, Integer cottonMin, Integer cottonMax);
-
-    //    List<Socks> getAllSocks();
     Socks addSocks(Socks socks);
     boolean releaseOrDeleteSocks(Socks socks);
     Path createSocksReport();

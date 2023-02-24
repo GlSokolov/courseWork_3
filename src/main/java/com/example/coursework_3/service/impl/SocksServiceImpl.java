@@ -27,110 +27,44 @@ public class SocksServiceImpl implements SocksService {
     final private FileService fileService;
 
 
-//    @Override
-//    public List<Socks> getAllSocks() {
-//        if (socksMap.isEmpty()){
-//            throw new NotFoundException("<Список пуст>");
-//        }
-//        return socksMap;
-//    }
-
     @Override
     public Object getSocks(Socks.Color color, Socks.Size size, Integer cottonMin, Integer cottonMax) {
         List<Object> socksList = new ArrayList<>();
         for (Socks oldSocks : socksMap) {
-            if ((color != null && size != null)
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getSize().equals(size)
-                    && (cottonMax == null && cottonMin == null)) {
-                socksList.add(oldSocks);
-            } else
-            if ((color != null && size != null && cottonMax != null && cottonMin !=null)
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getSize().equals(size)
-                    && oldSocks.getCottonPart() >= cottonMin
-                    && oldSocks.getCottonPart() <= cottonMax) {
-                socksList.add(oldSocks);
-            } else
-            if ((color != null && size != null && cottonMin !=null)
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getSize().equals(size)
-                    && oldSocks.getCottonPart() >= cottonMin
-                    && cottonMax == null) {
-                socksList.add(oldSocks);
-            } else
-            if ((color != null && size != null && cottonMax !=null)
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getSize().equals(size)
-                    && oldSocks.getCottonPart() <= cottonMax
-                    && cottonMin == null) {
-                socksList.add(oldSocks);
-            } else
-//===================================================================
-            if (size == null && cottonMax != null && cottonMin !=null
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getCottonPart() >= cottonMin
-                    && oldSocks.getCottonPart() <= cottonMax){
-                socksList.add(oldSocks);
-            } else
-            if (size == null
-                    && oldSocks.getColor().equals(color)
-                    && (cottonMax == null && cottonMin == null)){
-                socksList.add(oldSocks);
-            } else
-            if (size == null && cottonMax != null
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getCottonPart() <= cottonMax
-                    && cottonMin == null){
-                socksList.add(oldSocks);
-            } else
-            if (size == null && cottonMin != null
-                    && oldSocks.getColor().equals(color)
-                    && oldSocks.getCottonPart() >= cottonMin
-                    && cottonMax == null){
-                socksList.add(oldSocks);
-            } else
-//===================================================================
-            if (color == null && cottonMax != null && cottonMin !=null
-                    && (oldSocks.getSize().equals(size)
-                    && oldSocks.getCottonPart() >= cottonMin
-                    && oldSocks.getCottonPart() <= cottonMax)){
-                socksList.add(oldSocks);
-            } else
-            if (color == null
-                    && oldSocks.getSize().equals(size)
-                    && (cottonMax == null && cottonMin == null)){
-                socksList.add(oldSocks);
-            } else
-            if (color == null && cottonMax != null
-                    && oldSocks.getSize().equals(size)
-                    && (oldSocks.getCottonPart() <= cottonMax
-                    && cottonMin == null)){
-                socksList.add(oldSocks);
-            } else
-            if (color == null && cottonMin != null
-                    && oldSocks.getSize().equals(size)
-                    && (oldSocks.getCottonPart() >= cottonMin
-                    && cottonMax == null)){
-                socksList.add(oldSocks);
-            }
-//===================================================================
-            if (color == null && size == null && cottonMax == null && cottonMin !=null
-                    && oldSocks.getCottonPart() >= cottonMin){
-                socksList.add(oldSocks);
-            }
-            if (color == null && size == null && cottonMin == null && cottonMax !=null
-                    && oldSocks.getCottonPart() <= cottonMax){
-                socksList.add(oldSocks);
+            if (oldSocks.getColor().equals(color) || color == null) {
+
+                if (oldSocks.getSize().equals(size) || size == null) {
+
+                    if ((cottonMin !=null && cottonMax != null) && (oldSocks.getCottonPart() <= cottonMax && oldSocks.getCottonPart() >= cottonMin)){
+
+                        socksList.add(oldSocks);
+
+                    } else if (cottonMin == null || cottonMax == null) {
+
+                        if (cottonMin == null && cottonMax != null && oldSocks.getCottonPart() <= cottonMax) {
+                            socksList.add(oldSocks);
+                        }
+                        if (cottonMax == null && cottonMin != null && oldSocks.getCottonPart() >= cottonMin) {
+                            socksList.add(oldSocks);
+                        }
+                        if (cottonMin == null && cottonMax == null) {
+                            cottonMax = 100;
+                            cottonMin = 0;
+                            socksList.add(oldSocks);
+                        }
+                    }
+                }
             }
         }
-//===================================================================
-        if (color == null && size == null && cottonMax == null && cottonMin == null){
+
+        if (color == null && size == null && cottonMax == null && cottonMin == null) {
             return socksMap;
         }
+
         if (socksList.isEmpty()) {
             throw new NotFoundException("<Товар с таким параметрами не найдены>");
         }
+
         return socksList;
     }
 

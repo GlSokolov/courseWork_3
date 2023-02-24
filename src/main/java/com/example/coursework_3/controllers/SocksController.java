@@ -42,17 +42,6 @@ public class SocksController {
         return ResponseEntity.ok(socks);
     }
 
-//    @GetMapping
-//    @Operation(summary = "Список всего товара", description = "Показывает список всех носков на данный момент")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "HTTP 200" , description = "Список получен"),
-//            @ApiResponse(responseCode = "HTTP 400" , description = "Ошибка 400"),
-//            @ApiResponse(responseCode = "HTTP 500" , description = "Произошла ошибка, не зависящая от вызывающей стороны")
-//    })
-//    public ResponseEntity<List<Socks>> getSocks () {
-//        return ResponseEntity.ok(socksService.getAllSocks());
-//    }
-
     @GetMapping
     @Operation(summary = "Список товара", description = "Показывает список носков по вводимым параметрам")
     @ApiResponses(value = {
